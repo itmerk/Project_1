@@ -31,3 +31,5 @@ Storage of data in a MongoDB database as a data lake.
 Migration of data from the data lake to a SQL database for efficient querying and analysis.
 
 Search and retrieval of data from the SQL database using different search options.
+
+My project is about get 10 Channel id for user, extract information for youtube information, store the data in mongo db then import the data to MySQL and final analysis queries. 
