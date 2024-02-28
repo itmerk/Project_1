@@ -225,6 +225,7 @@ db = client["Youtube_Data"]
 def channel_table():
     connection = mysql.connector.connect(host='localhost',user='root',password='12345',database='Youtube')
     mycursor = connection.cursor()
+
     
     create_query = '''CREATE TABLE IF NOT EXISTS channels(
                             channel_name VARCHAR(225),
@@ -246,7 +247,7 @@ def channel_table():
     df = pd.DataFrame(channel_name_list)
     
     for index, row in df.iterrows():
-        insert_query = '''INSERT INTO channels(
+        insert_query = '''INSERT IGNORE INTO channels(
                             channel_name,
                             channel_id,
                             subscriber_count,
@@ -302,7 +303,7 @@ def playlist_table():
     df1 = pd.DataFrame(playlist_name_list)
 
     for index, row in df1.iterrows():
-        insert_query = """INSERT INTO playlists(
+        insert_query = """INSERT IGNORE INTO playlists(
                             playlist_id, 
                             playlist_title,
                             channel_id, 
@@ -395,7 +396,7 @@ def videos_table():
         #convert likes count to integer if not none,else set to none
         likes_count = int(row['likes_count']) if row['likes_count'] is not None else None
 
-        insert_query = """INSERT INTO videos(
+        insert_query = """INSERT IGNORE INTO videos(
                                 channel_id, 
                                 channel_name,
                                 video_id, 
@@ -466,7 +467,7 @@ def comment_table():
     df3= pd.DataFrame(comment_name_list)
     
     for index,row in df3.iterrows():
-        insert_query = """INSERT INTO comments(comment_id, 
+        insert_query = """INSERT IGNORE INTO comments(comment_id, 
                                                 comment_text,
                                                 comment_author,
                                                 video_id,
@@ -703,7 +704,7 @@ elif selection == 'Sample Process':
 
                             st.write(":red[Comment Text :]", comment_info.get('textDisplay'))
                             st.write(":red[Comment Author :]", comment_info.get('authorDisplayName'))
-                            st.write("Published at:", comment_info.get('publishedAt'))
+                            st.write(":red[Published at:]", comment_info.get('publishedAt'))
 
                     else:
                         st.warning("No comments found for this video.")
@@ -737,14 +738,14 @@ elif selection == 'Extraction Data':
 
             new_ids = [channel_id for channel_id in input_ids if channel_id not in ch_ids][:10]
 
-        if new_ids:
-            inserts = []
-            for new_id in new_ids:
-                inserts.append(channel_details(new_id))
-            st.success(f"Successfully inserted details for {len(inserts)} new channels.")
+            if new_ids:
+                inserts = []
+                for new_id in new_ids:
+                    inserts.append(channel_details(new_id))
+                st.success(f"Successfully inserted details for {len(inserts)} new channels.")
 
-        else:
-            st.info("No new channel IDs to insert.")
+            else:
+                st.info("No new channel IDs to insert.")
 
 elif selection == 'View Data':
     st.title('View Data in MongoDB')
@@ -779,6 +780,18 @@ elif selection == 'Migrate to MySQL':
         with st.spinner("Please wait data transfer form MongoDB to MySQL server....."):
             Table = tables()
             st.success(Table)
+            
+    
+    st.markdown('''Data Already in MySQL''')
+
+    connection = mysql.connector.connect(host='localhost',user='root',password='12345',database='Youtube')
+    mycursor = connection.cursor()
+
+    query = '''SELECT channel_name,channel_id FROM channels'''
+    mycursor.execute(query)
+    result = mycursor.fetchall()
+    df=pd.DataFrame(result,columns=["channel_name","channel_id"])
+    st.write(df)
 
 elif selection == 'Analysis using SQL':
     st.title('Analysis using SQL')
