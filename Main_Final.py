@@ -7,7 +7,6 @@ from datetime import datetime
 import re
 import streamlit as st
 
- 
 #define the function to establish API connection
 def api_connect():
     #API key for accessing the youtube API
@@ -21,7 +20,6 @@ def api_connect():
     return youtube
 #call the api_connect function to get a youtube service
 youtube = api_connect()
-
 
 #define function getting to retrieve channel info based on channel id using API connect function
 def get_channel_info(channel_id):
@@ -44,7 +42,6 @@ def get_channel_info(channel_id):
                 )
         #return the dicitonary containing channel information
         return data 
-
 
 #define function for getting video id for channel id using API connect function
 def get_video_ids(channel_id):
@@ -79,7 +76,6 @@ def get_video_ids(channel_id):
             break
     #return the list of video IDs
     return video_ids
-
 
 #define function to get video info for video ids
 def get_video_detial(video_ids): 
@@ -147,8 +143,6 @@ def get_comment_info(video_ids):
     #return the list of comment data
     return comment_data
 
-
-
 #main function to get playlist detial for channel id
 def get_playlist_detial(channel_id): 
     #initalize the variable to store the token for next page of result 
@@ -215,7 +209,6 @@ def channel_details(channel_id):
     return "Data extract successfully"
 
 #Streamlit part
-
 st.sidebar.title(':rainbow[YOUTUBE DATA HAVERSTING TOOL]') #create title in streamlit in rainbow font color
 selection = st.sidebar.selectbox("Menu", ['Application Details', 'Sample Process','Extraction Data', 'View Data in MongoDB',
                                           'Migrate to MySQL','View Data in MySQL','Analysis using SQL']) #create the selectbox in streamlit code
@@ -376,7 +369,7 @@ elif selection == 'Sample Process':
                 st.warning("Channel ID not valid.")
 
 elif selection == 'Extraction Data':
-    st.title('Extraction Data for Youtube and store in MangoDB')
+    st.title('Extraction Data for Youtube and Store in MangoDB')
 
     channel_ids = st.text_area("Enter the Channel IDs (separated by comma)")
 
@@ -410,7 +403,7 @@ elif selection == 'Extraction Data':
                 st.info("No new channel IDs to insert.")
 
 elif selection == 'View Data in MongoDB':
-    st.title('View Data in MongoDB')
+    st.title('Data stored in MongoDB')
     
     #retrieves data from a MongoDB database and channel detial displays it in a dataFrame using streamlit library
     def show_channel_table():
@@ -778,20 +771,20 @@ elif selection == 'Migrate to MySQL':
         else:
             st.warning("Channel data already updated in SQL")
 elif selection == 'View Data in MySQL':
-    st.title('View Data in MySQL')
+    st.title('Channel Data Stored in MySQL')
     
     connection = mysql.connector.connect(host='localhost',user='root',password='12345',database='Youtube')
     mycursor = connection.cursor()
 
-    channel_list = '''SELECT channel_name,channel_id FROM channels'''
+    channel_list = '''SELECT channel_name FROM channels'''
     mycursor.execute(channel_list)
 
     d1=mycursor.fetchall()
-    my_sql_channel_name =pd.DataFrame(d1,columns=["channel_name","channel_id"])
+    my_sql_channel_name =pd.DataFrame(d1,columns=["channel_name"])
     st.write(my_sql_channel_name)
     
 elif selection == 'Analysis using SQL':
-    st.title('Analysis using SQL')
+    st.title('Analysis Collected Data using SQL')
 
     connection = mysql.connector.connect(host='localhost',user='root',password='12345',database='Youtube')
     mycursor = connection.cursor()
